@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WeatherPage() {
+fun WeatherPage(viewmodel: WeatherViewmodel) {
     var city by remember { mutableStateOf("") }
 
     Column(
@@ -44,13 +44,13 @@ fun WeatherPage() {
                 modifier = Modifier.weight(1f),
                 value = city,
                 onValueChange = {
-
-                },
+                city = it},
                 label = {
                     Text(text = "Search for any location")
                 }
             )
             IconButton(onClick = {
+                viewmodel.getData(city)
 
             }) {
                 Icon(

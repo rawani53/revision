@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
             RevisionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                    WeatherPage(weatherViewmodel)
+
                 }
             }
         }

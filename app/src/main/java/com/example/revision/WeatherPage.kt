@@ -14,12 +14,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,18 +33,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.revision.api.NetworkResponse
 
 @Composable
 fun WeatherPage(viewmodel: WeatherViewmodel) {
+
     var city by remember { mutableStateOf("") }
+    val weatherResult = viewmodel.weatherResult.observeAsState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 50.dp,
+            .padding(
+                top = 50.dp,
                 bottom = 8.dp,
                 start = 8.dp,
-                end = 8.dp),
+                end = 8.dp
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -56,7 +63,8 @@ fun WeatherPage(viewmodel: WeatherViewmodel) {
                 modifier = Modifier.weight(1f),
                 value = city,
                 onValueChange = {
-                city = it},
+                    city = it
+                },
                 label = {
                     Text(text = "Search for any location")
                 }
@@ -72,59 +80,86 @@ fun WeatherPage(viewmodel: WeatherViewmodel) {
             }
 
         }
-        WeatherDetails()
+        //  WeatherDetails()
 
-    }
-}
+        when (val result = weatherResult.value) {
+            is NetworkResponse.Error -> {
+                Text(text = result.message)
+            }
 
-@Composable
-fun WeatherDetails() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = "Location icon",
-                modifier = Modifier.size(40.dp)
-            )
-            Text(text = "sample", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "sample", fontSize = 18.sp, color = Color.Gray)
+            NetworkResponse.Loading -> {
+                CircularProgressIndicator()
+            }
+
+            is NetworkResponse.Success -> {
+                Text(result.data.toString())
+            }
+
+            null -> {
+            }
+
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "  ddsfs ° c",
-            fontSize = 56.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.freeimage),
-            modifier = Modifier.size(160.dp),
-
-            contentDescription = "Condition icon"
-        )
-        Text(
-            text = "fgdsgsdfsd",
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            color = Color.Gray
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-
-
     }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+//@Composable
+//fun WeatherDetails() {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceAround,
+//            verticalAlignment = Alignment.Bottom
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.LocationOn,
+//                contentDescription = "Location icon",
+//                modifier = Modifier.size(40.dp)
+//            )
+//            Text(text = "sample", fontSize = 30.sp)
+//            Spacer(modifier = Modifier.width(8.dp))
+//            Text(text = "sample", fontSize = 18.sp, color = Color.Gray)
+//        }
+//
+//        Spacer(modifier = Modifier.height(16.dp))
+//        Text(
+//            text = "  ddsfs ° c",
+//            fontSize = 56.sp,
+//            fontWeight = FontWeight.Bold,
+//            textAlign = TextAlign.Center
+//        )
+//
+//        Image(
+//            painter = painterResource(id = R.drawable.freeimage),
+//            modifier = Modifier.size(160.dp),
+//
+//            contentDescription = "Condition icon"
+//        )
+//        Text(
+//            text = "fgdsgsdfsd",
+//            fontSize = 20.sp,
+//            textAlign = TextAlign.Center,
+//            color = Color.Gray
+//        )
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//
+//
+//
+//    }
+//
+//}

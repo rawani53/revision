@@ -21,16 +21,22 @@ class WeatherViewmodel: ViewModel() {
         Log.i("City name :",city)
 
         viewModelScope.launch {
-           val response = weatherApi.getWeather(Constant.apikey, city)
-            if(response.isSuccessful){
-                Log.i("Response :", response.body().toString())
-                response.body()?.let {
-                    _weatherResult.value = NetworkResponse.Success(it)
+            _weatherResult.value = NetworkResponse.Loading
+            try {
+                val response = weatherApi.getWeather(Constant.apikey, city)
+                if (response.isSuccessful) {
+                    Log.i("Response :", response.body().toString())
+                    response.body()?.let {
+                        _weatherResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    Log.i("Error: ", response.message())
+                    _weatherResult.value = NetworkResponse.Error("Failed to load data")
                 }
-            }else{
-                Log.i("Error: ", response.message())
             }
-
+            catch ( e : Exception){
+                _weatherResult.value = NetworkResponse.Error("Failed to load data")
+            }
+        }
         }
     }
-}
